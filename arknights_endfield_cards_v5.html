@@ -13,7 +13,7 @@
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .card{border-radius:var(--border-radius-lg);border:0.5px solid;overflow:hidden;transition:border-color .15s,transform .15s}
 .card:hover{transform:translateY(-1px)}
-.wname{font-size:13px;font-weight:500;color:var(--color-text-primary);line-height:1.4;display:block}
+.wname{font-size:13px;font-weight:500;color:#111;line-height:1.4;display:block}
 .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:500;white-space:nowrap}
 .no-res{text-align:center;padding:2.5rem;color:var(--color-text-secondary);font-size:13px;grid-column:1/-1}
 .foot{font-size:11px;color:var(--color-text-secondary)}
@@ -169,13 +169,13 @@ function render(){
 
     // 基礎効果ピル
     const bPillBg=hex2rgba(bkC.acc,0.18);
-    const bPillTx=d?bkC.txD:bkC.tx;
+    const bPillTx=bkC.tx;
     // 付加効果ピル
     const ePillBg=hex2rgba(efAcc,0.20);
-    const ePillTx=d?"#ddd":efTx;
+    const ePillTx=efTx;
     // スキルピル
     const sPillBg=hex2rgba(skAcc,0.22);
-    const sPillTx=d?"#ddd":skTx;
+    const sPillTx=skTx;
 
     return `<div class="card" style="background:linear-gradient(160deg,${g1} 0%,${g2} 45%,var(--color-background-primary) 100%);border-color:${borderC}">
       <div style="padding:10px 12px 8px;background:linear-gradient(130deg,${headG} 0%,transparent 100%);border-bottom:0.5px solid ${borderC}">
