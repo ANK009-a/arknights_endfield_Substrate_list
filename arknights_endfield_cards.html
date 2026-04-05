@@ -1,0 +1,307 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1rem 0;font-family:var(--font-sans)}
+.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.top-bar input{flex:1;min-width:0;padding:7px 12px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.fs{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:10px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+.fr{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fl{font-size:11px;color:var(--color-text-secondary);font-weight:500;white-space:nowrap;min-width:52px}
+.fbtn{font-size:12px;padding:3px 10px;border:0.5px solid var(--color-border-secondary);border-radius:999px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .12s;white-space:nowrap}
+.fbtn:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
+.fbtn.active{color:var(--ab-tx);background:var(--ab-bg);border-color:var(--ab-bg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.card{border-radius:var(--border-radius-lg);overflow:hidden;transition:transform .15s,box-shadow .15s;border:none}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.35)}
+.card-head{padding:10px 12px 10px;position:relative;overflow:hidden;min-height:78px}
+.card-deco{position:absolute;right:2px;top:-6px;font-size:68px;opacity:0.13;font-weight:900;pointer-events:none;line-height:1;color:#fff;user-select:none}
+.card-img{position:absolute;right:8px;bottom:6px;width:52px;height:52px;object-fit:contain;z-index:2;opacity:0.92;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.4))}
+.card-stars{font-size:9px;letter-spacing:3px;margin-bottom:5px;position:relative;z-index:1}
+.card-type-lbl{font-size:9px;opacity:0.75;font-weight:600;letter-spacing:0.5px;line-height:1.2;position:relative;z-index:1}
+.card-name-txt{font-size:13px;font-weight:700;line-height:1.35;position:relative;z-index:1}
+.card-body{padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;background:rgba(12,10,8,0.72)}
+.srow{display:flex;align-items:center;gap:6px;font-size:12px;color:#ccc8c2}
+.srow-dot{width:6px;height:6px;border-radius:50%;border:1.5px solid;flex-shrink:0}
+.srow-name{flex:1}
+.srow-bar{width:3px;height:13px;border-radius:2px;flex-shrink:0}
+.srow-val{font-size:11px;font-weight:700;min-width:22px;text-align:right}
+.no-res{text-align:center;padding:2.5rem;color:var(--color-text-secondary);font-size:13px;grid-column:1/-1}
+.foot{font-size:11px;color:var(--color-text-secondary)}
+</style>
+
+<div class="wrap">
+<div class="top-bar">
+  <input type="text" id="q" placeholder="武器名で検索..." oninput="render()">
+  <span class="foot" id="cnt"></span>
+</div>
+<div class="fs">
+  <div class="fr"><span class="fl">基礎効果</span><div id="bf" style="display:flex;flex-wrap:wrap;gap:4px"></div></div>
+  <div class="fr"><span class="fl">付加効果</span><div id="ef" style="display:flex;flex-wrap:wrap;gap:4px"></div></div>
+  <div class="fr"><span class="fl">スキル</span><div id="sf" style="display:flex;flex-wrap:wrap;gap:4px"></div></div>
+  <div class="fr"><span class="fl">武器種</span><div id="wf" style="display:flex;flex-wrap:wrap;gap:4px"></div></div>
+</div>
+<div class="grid" id="grid"></div>
+</div>
+
+<script>
+const D=[
+  ["敏捷","物理ダメージ","巧技",["鋼鉄余音"]],
+  ["知性","必殺技効率","昂揚",["堅城鋳造者"]],
+  ["筋力","寒冷ダメージ","圧制",["フィンチェイサー3.0"]],
+  ["敏捷","攻撃力","付術",["十二間"]],
+  ["敏捷","攻撃力","流回",["O.B.J.軽刃"]],
+  ["敏捷","物理ダメージ","夜幕",["抑止"]],
+  ["敏捷","攻撃力","付術",["大願"]],
+  ["意志","攻撃力","流回",["不知帰"]],
+  ["知性","攻撃力","夜幕",["フレイムフォージ"]],
+  ["知性","灼熱ダメージ","付術",["ダークトーチ"]],
+  ["メイン能力","会心率","夜幕",["フーヤオ"]],
+  ["意志","攻撃力","流回",["テルミットカッター"]],
+  ["メイン能力","物理ダメージ","残虐",["輝しき名声"]],
+  ["メイン能力","アーツ強度","付術",["白夜新星"]],
+  ["敏捷","会心率","切骨",["狼緋"]],
+  ["敏捷","会心率","夜幕",["栄光の記憶"]],
+
+  ["筋力","必殺技効率","噴発",["探龍"]],
+  ["筋力","アーツ強度","残虐",["千古恒常"]],
+  ["筋力","HPアップ","治癒",["最期の声"]],
+  ["筋力","HPアップ","効率",["O.B.J.重責"]],
+  ["筋力","HPアップ","治癒",["大雷斑"]],
+  ["筋力","攻撃力","噴発",["クラヴェンガー"]],
+  ["メイン能力","攻撃力","圧制",["鑑"]],
+  ["意志","HPアップ","効率",["昔日の逸品"]],
+  ["筋力","会心率","破砕",["破砕君主"]],
+
+  ["筋力","必殺技効率","残虐",["正義嵌合"]],
+  ["意志","物理ダメージ","付術",["O.B.J.鋭矛"]],
+  ["意志","電磁ダメージ","圧制",["求心の槍"]],
+  ["敏捷","物理ダメージ","効率",["負山"]],
+  ["敏捷","物理ダメージ","巧技",["勇猛"]],
+  ["メイン能力","攻撃力","圧制",["J.E.T."]],
+  
+  ["敏捷","アーツダメージ","付術",["作品：衆生"]],
+  ["敏捷","必殺技効率","噴発",["O.B.J.迅速"]],
+  ["筋力","灼熱ダメージ","追襲",["合理的決別"]],
+  ["知性","会心率","切骨",["芸術の独裁者"]],
+  ["知性","寒冷ダメージ","付術",["ナビゲーター"]],
+  ["メイン能力","会心率","付術",["楔"]],
+  ["メイン能力","アーツダメージ","付術",["同類共食"]],
+  ["敏捷","攻撃力","噴発",["落草"]],
+  ["敏捷","寒冷ダメージ","圧制",["望郷"]],
+  
+  ["知性","攻撃力","夜幕",["弔いの詩"]],
+  ["意志","必殺技効率","昂揚",["術無"]],
+  ["知性","電磁ダメージ","付術",["荒野迷走"]],
+  ["意志","回復効率","治癒",["布教の自由"]],
+  ["知性","アーツ強度","追襲",["O.B.J.術識"]],
+  ["意志","必殺技効率","追襲",["使命必達"]],
+  ["知性","回復効率","付術",["蒼星の囁き"]],
+  ["意志","自然ダメージ","圧制",["作品：蝕跡"]],
+  ["メイン能力","アーツ強度","噴発",["破壊ユニット"]],
+  ["知性","アーツダメージ","夜幕",["遺忘"]],
+  ["意志","HPアップ","治癒",["騎士精神"]],
+
+];
+
+const dark=()=>window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;
+
+// ゲーム準拠スキルカラー {acc: ゲーム色, tx: 暗色テキスト, txD: ダーク時テキスト}
+const SK_COLOR={
+  "圧制":"#F9F380","流回":"#F9F380","夜幕":"#F9F380","追襲":"#F9F380",
+  "噴発":"#81C3F0","付術":"#81C3F0",
+  "切骨":"#C2D5E0","昂揚":"#C2D5E0","残虐":"#C2D5E0","破砕":"#C2D5E0",
+  "治癒":"#84F4A9","効率":"#84F4A9",
+  "巧技":"#F6AFB7",
+};
+// 各色の暗色テキスト（コントラスト確保）
+const SK_TX={
+  "#F9F380":"#4a4400","#81C3F0":"#0b3a5c","#C2D5E0":"#1a3545",
+  "#84F4A9":"#0a3d1f","#F6AFB7":"#5c0f20",
+};
+
+const WT_COLOR={
+  "片手剣":     "#E8C86A",
+  "大剣":       "#E05050",
+  "長柄武器":   "#5CB85C",
+  "拳銃":       "#7B68C8",
+  "アーツユニット":"#4BB8C8",
+};
+const WT_TX={
+  "#E8C86A":"#4a3200",
+  "#E05050":"#4a0a0a",
+  "#5CB85C":"#0f350f",
+  "#7B68C8":"#1a1045",
+  "#4BB8C8":"#0a2f35",
+};
+
+const BC={
+  "意志":  {acc:"#378ADD",tx:"#042C53",txD:"#B5D4F4"},
+  "筋力":  {acc:"#D85A30",tx:"#4A1B0C",txD:"#F5C4B3"},
+  "敏捷":  {acc:"#639922",tx:"#173404",txD:"#C0DD97"},
+  "知性":  {acc:"#7F77DD",tx:"#26215C",txD:"#CECBF6"},
+  "メイン能力":{acc:"#BA7517",tx:"#412402",txD:"#FAC775"},
+};
+
+// 付加効果カラーグループ
+const EF_COLOR={
+  "電磁ダメージ":"#C2D5E0","寒冷ダメージ":"#C2D5E0","物理ダメージ":"#C2D5E0",
+  "灼熱ダメージ":"#F9F380","自然ダメージ":"#84F4A9",
+  "アーツダメージ":"#81C3F0","アーツ強度":"#81C3F0",
+  "攻撃力":"#F9F380","HPアップ":"#84F4A9",
+  "必殺技効率":"#F6AFB7","回復効率":"#84F4A9","会心率":"#F9F380",
+};
+
+function hex2rgba(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
+
+const WEAPON_INFO={
+  "望郷":{type:"拳銃",  rarity:6,en:"Homeward"},
+  "作品：蝕跡":{type:"アーツユニット",rarity:6,en:"Opus_Etch_Figure"},
+  "鑑":        {type:"大剣",          rarity:6,en:"Exemplar"},
+  "J.E.T.":       {type:"長柄武器",      rarity:6,en:"JET"},
+  "負山":      {type:"長柄武器",      rarity:6,en:"Mountain_Bearer"},
+  "勇猛":      {type:"長柄武器",      rarity:6,en:"Valiant"},
+  "輝しき名声":{type:"片手剣",        rarity:6,en:"Eminent_Repute"},
+  "騎士精神":  {type:"アーツユニット",rarity:6,en:"Chivalric_Virtues"},
+  "大雷斑":    {type:"大剣",          rarity:6,en:"Thunderberge"},
+  "芸術の独裁者":{type:"拳銃",        rarity:6,en:"Artzy_Tyrannical"},
+  "狼緋":      {type:"片手剣",        rarity:6,en:"Lupine_Scarlet"},
+  "使命必達":  {type:"アーツユニット",rarity:6,en:"Delivery_Guaranteed"},
+  "破砕君主":  {type:"大剣",          rarity:6,en:"Sundered_Prince"},
+  "ナビゲーター":{type:"拳銃",        rarity:6,en:"Navigator"},
+  "蒼星の囁き":{type:"アーツユニット",rarity:6,en:"Dreams_of_the_Starry_Beach"},
+  "楔":        {type:"拳銃",          rarity:6,en:"Wedge"},
+  "白夜新星":  {type:"片手剣",        rarity:6,en:"White_Night_Nova"},
+  "同類共食":  {type:"拳銃",          rarity:6,en:"Clannibal"},
+  "クラヴェンガー":{type:"大剣",      rarity:6,en:"Khravengger"},
+  "破壊ユニット":{type:"アーツユニット",rarity:6,en:"Detonation_Unit"},
+  "落草":      {type:"拳銃",          rarity:6,en:"Brigands_Calling"},
+  "フレイムフォージ":{type:"片手剣",  rarity:6,en:"Forgeborn_Scathe"},
+  "フーヤオ":  {type:"片手剣",        rarity:6,en:"Rapid_Ascent"},
+  "栄光の記憶":{type:"片手剣",        rarity:6,en:"Glorious_Memory"},
+  "遺忘":      {type:"アーツユニット",rarity:6,en:"Oblivion"},
+  "テルミットカッター":{type:"片手剣",rarity:6,en:"Thermite_Cutter"},
+  "不知帰":    {type:"片手剣",        rarity:6,en:"Never_Rest"},
+  "昔日の逸品":{type:"大剣",          rarity:6,en:"Former_Finery"},
+  "ダークトーチ":{type:"片手剣",      rarity:6,en:"Umbral_Torch"},
+  "大願":      {type:"片手剣",        rarity:6,en:"Grand_Vision"},
+  "求心の槍":  {type:"長柄武器",      rarity:5,en:"Cohesive_Traction"},
+  "フィンチェイサー3.0":{type:"片手剣",  rarity:5,en:"Finchaser_3.0"},
+  "O.B.J.重責":{type:"大剣",          rarity:5,en:"OBJ_Heavy_Burden"},
+  "鋼鉄余音":  {type:"片手剣",        rarity:5,en:"Sundering_Steel"},
+  "術無":      {type:"アーツユニット",rarity:5,en:"Monaihe"},
+  "堅城鋳造者":{type:"片手剣",        rarity:5,en:"Fortmaker"},
+  "正義嵌合":  {type:"長柄武器",      rarity:5,en:"Chimeric_Justice"},
+  "千古恒常":  {type:"大剣",          rarity:5,en:"Ancient_Canal"},
+  "布教の自由":{type:"アーツユニット",rarity:5,en:"Freedom_to_Proselytize"},
+  "最期の声":  {type:"大剣",          rarity:5,en:"Finishing_Call"},
+  "合理的決別":{type:"拳銃",          rarity:5,en:"Rational_Farewell"},
+  "O.B.J.術識":{type:"アーツユニット",rarity:5,en:"OBJ_Arts_Identifier"},
+  "O.B.J.鋭矛":{type:"長柄武器",      rarity:5,en:"OBJ_Razorhorn"},
+  "荒野迷走":  {type:"アーツユニット",rarity:5,en:"Wild_Wanderer"},
+  "十二間":    {type:"片手剣",        rarity:5,en:"Twelve_Questions"},
+  "作品：衆生":{type:"拳銃",          rarity:5,en:"Opus_The_Living"},
+  "探龍":      {type:"大剣",          rarity:5,en:"Seeker_of_Dark_Lung"},
+  "O.B.J.迅速":{type:"拳銃",          rarity:5,en:"OBJ_Velocitous"},
+  "抑止":      {type:"片手剣",        rarity:5,en:"Aspirant"},
+  "弔いの詩":  {type:"アーツユニット",rarity:5,en:"Stanza_of_Memorials"},
+  "O.B.J.軽刃":   {type:"片手剣",        rarity:5,en:"OBJ_Edge_of_Lightness"},
+};
+
+function weaponImgUrl(en){
+  if(!en)return null;
+  const hex=(en+'_icon.png').split('').map(c=>c.charCodeAt(0).toString(16).padStart(2,'0').toUpperCase()).join('');
+  return'https://arknights-endfield.wikiru.jp/attach2/696D67_'+hex+'.png';
+}
+
+let bF="all",eF="all",sF="all",wF="all";
+
+const ALL_ACTIVE="--ab-bg:#4a4a4a;--ab-tx:#ffffff;--ab-border:#4a4a4a";
+
+function buildFilters(){
+  const bases=[...new Set(D.map(r=>r[0]))];
+  const effs=[...new Set(D.map(r=>r[1]))];
+  const skills=[...new Set(D.map(r=>r[2]))];
+
+  document.getElementById("bf").innerHTML=
+    `<button class="fbtn active" style="${ALL_ACTIVE}" onclick="setB('all')">すべて</button>`+
+    bases.map(b=>`<button class="fbtn" style="${ALL_ACTIVE}" onclick="setB('${b}')">${b}</button>`).join("");
+
+  document.getElementById("ef").innerHTML=
+    `<button class="fbtn active" style="${ALL_ACTIVE}" onclick="setE('all')">すべて</button>`+
+    effs.map(e=>`<button class="fbtn" style="${ALL_ACTIVE}" onclick="setE('${e}')">${e}</button>`).join("");
+
+  document.getElementById("sf").innerHTML=
+    `<button class="fbtn active" style="${ALL_ACTIVE}" onclick="setS('all')">すべて</button>`+
+    skills.map(s=>`<button class="fbtn" style="${ALL_ACTIVE}" onclick="setS('${s}')">${s}</button>`).join("");
+
+  const wtypes=["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
+  document.getElementById("wf").innerHTML=
+    `<button class="fbtn active" style="${ALL_ACTIVE}" onclick="setW('all')">すべて</button>`+
+    wtypes.map(t=>`<button class="fbtn" style="${ALL_ACTIVE}" onclick="setW('${t}')">${t}</button>`).join("");
+}
+
+function setB(v){bF=v;document.querySelectorAll("#bf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(v==="all"?"すべて":v)));render();}
+function setE(v){eF=v;document.querySelectorAll("#ef .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(v==="all"?"すべて":v)));render();}
+function setS(v){sF=v;document.querySelectorAll("#sf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(v==="all"?"すべて":v)));render();}
+function setW(v){wF=v;document.querySelectorAll("#wf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(v==="all"?"すべて":v)));render();}
+
+function render(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const flat=D.flatMap(r=>r[3].map(w=>[r[0],r[1],r[2],w]));
+  const rows=flat.filter(r=>{
+    if(bF!=="all"&&r[0]!==bF)return false;
+    if(eF!=="all"&&r[1]!==eF)return false;
+    if(sF!=="all"&&r[2]!==sF)return false;
+    if(wF!=="all"&&(WEAPON_INFO[r[3]]?.type||"")!==wF)return false;
+    if(q&&!r[3].toLowerCase().includes(q))return false;
+    return true;
+  });
+  const grid=document.getElementById("grid");
+  if(!rows.length){grid.innerHTML=`<div class="no-res">該当データなし</div>`;document.getElementById("cnt").textContent="0件";return;}
+
+  grid.innerHTML=rows.map(r=>{
+    const skAcc=SK_COLOR[r[2]]||"#888888";
+    const skTx=SK_TX[skAcc]||"#222";
+    const bkC=BC[r[0]]||{acc:"#888",tx:"#222",txD:"#ddd"};
+    const efAcc=EF_COLOR[r[1]]||"#888";
+    const wInfo=WEAPON_INFO[r[3]]||{type:"不明",rarity:5};
+    const dCount=wInfo.rarity>=6?6:5;
+    const dColor=dCount===6?"#FF7000":"#FFBA03";
+    const headBg=`linear-gradient(135deg,${skAcc} 0%,${hex2rgba(skAcc,0.55)} 50%,${hex2rgba(dColor,0.55)} 100%)`;
+    const bodyBg=`linear-gradient(180deg,${hex2rgba(dColor,0.12)} 0%,rgba(12,10,8,0.82) 55%)`;
+
+    return `<div class="card">
+      <div class="card-head" style="background:${headBg}">
+        <div class="card-deco">${r[2]}</div>
+        ${wInfo.en?`<img class="card-img" src="${weaponImgUrl(wInfo.en)}" onerror="this.style.display='none'" alt="">`:''}
+        <div class="card-stars" style="color:${dColor}">${"◆".repeat(dCount)}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="srow-bar" style="background:${dColor};height:30px"></div>
+          <div>
+            <div class="card-type-lbl" style="color:${skTx}">${wInfo.type}</div>
+            <div class="card-name-txt" style="color:${skTx}">${r[3]}</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="srow">
+          <div class="srow-dot" style="border-color:${bkC.acc}"></div>
+          <span class="srow-name">${r[0]}</span>
+        </div>
+        <div class="srow">
+          <div class="srow-dot" style="border-color:${efAcc}"></div>
+          <span class="srow-name">${r[1]}</span>
+        </div>
+        <div class="srow">
+          <div class="srow-dot" style="border-color:${skAcc}"></div>
+          <span class="srow-name">${r[2]}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  document.getElementById("cnt").textContent=`${rows.length} / ${flat.length} 件`;
+}
+
+buildFilters();render();
+window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{buildFilters();render();});
+</script>
