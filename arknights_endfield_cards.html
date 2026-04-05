@@ -1,16 +1,22 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-.wrap{padding:1rem 0;font-family:var(--font-sans)}
-.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.wrap{padding:2.2rem 0 1rem;font-family:var(--font-sans);min-height:100vh;background:linear-gradient(150deg,#EFED26 0%,#F5F03A 40%,#E2DB00 100%);position:relative;overflow:hidden}
+.wrap::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.65) 100%);pointer-events:none;z-index:0;mix-blend-mode:multiply}
+.geo-pattern{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:0.09}
+.bg-deco{position:fixed;top:-20%;left:-10%;width:120%;height:140%;display:flex;flex-direction:column;justify-content:space-around;transform:rotate(-12deg);opacity:0.07;pointer-events:none;user-select:none;z-index:0;overflow:hidden}
+.bd-row{display:flex;gap:64px;font-weight:900;font-size:56px;color:#000;white-space:nowrap;line-height:1.1}
+.bd-unit{display:flex;flex-direction:column;gap:0}
+.bd-sub{font-size:20px;font-weight:900;color:#000;line-height:1.3;letter-spacing:1px}
+.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;position:relative;z-index:1}
 .top-bar input{flex:1;min-width:0;padding:7px 12px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
-.fs{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:10px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+.fs{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:10px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:1}
 .fr{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .fl{font-size:11px;color:var(--color-text-secondary);font-weight:500;white-space:nowrap;min-width:52px}
 .fbtn{font-size:12px;padding:3px 10px;border:0.5px solid var(--color-border-secondary);border-radius:999px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .12s;white-space:nowrap}
 .fbtn:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
 .fbtn.active{color:var(--ab-tx);background:var(--ab-bg);border-color:var(--ab-bg)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;position:relative;z-index:1}
 .card{border-radius:var(--border-radius-lg);overflow:hidden;transition:transform .15s,box-shadow .15s;border:none}
 .card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.35)}
 .card-head{padding:10px 12px 10px;position:relative;overflow:hidden;min-height:78px}
@@ -19,7 +25,7 @@
 .card-stars{font-size:9px;letter-spacing:3px;margin-bottom:5px;position:relative;z-index:1}
 .card-type-lbl{font-size:9px;opacity:0.75;font-weight:600;letter-spacing:0.5px;line-height:1.2;position:relative;z-index:1}
 .card-name-txt{font-size:13px;font-weight:700;line-height:1.35;position:relative;z-index:1}
-.card-body{padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;background:rgba(12,10,8,0.72)}
+.card-body{padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;background:#504E4D}
 .srow{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#ccc8c2}
 .srow-dot{width:6px;height:6px;border-radius:50%;border:1.5px solid;flex-shrink:0}
 .srow-name{flex:1}
@@ -30,6 +36,38 @@
 </style>
 
 <div class="wrap">
+<div class="bg-deco">
+  <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
+  <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
+  <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
+  <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
+  <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
+  <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
+</div>
+<div class="geo-pattern">
+  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="hg" width="43.3" height="75" patternUnits="userSpaceOnUse">
+        <polygon points="21.65,0 43.3,12.5 43.3,37.5 21.65,50 0,37.5 0,12.5" fill="none" stroke="black" stroke-width="0.8"/>
+        <polygon points="0,37.5 21.65,50 21.65,75 0,87.5 -21.65,75 -21.65,50" fill="none" stroke="black" stroke-width="0.8"/>
+        <polygon points="43.3,37.5 65,50 65,75 43.3,87.5 21.65,75 21.65,50" fill="none" stroke="black" stroke-width="0.8"/>
+        <circle cx="21.65" cy="0" r="1.2" fill="black"/>
+        <circle cx="43.3" cy="12.5" r="1.2" fill="black"/>
+        <circle cx="43.3" cy="37.5" r="1.2" fill="black"/>
+        <circle cx="21.65" cy="50" r="1.2" fill="black"/>
+        <circle cx="0" cy="37.5" r="1.2" fill="black"/>
+        <circle cx="0" cy="12.5" r="1.2" fill="black"/>
+        <circle cx="21.65" cy="75" r="1.2" fill="black"/>
+        <circle cx="0" cy="62.5" r="1.2" fill="black"/>
+        <circle cx="43.3" cy="62.5" r="1.2" fill="black"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#hg)"/>
+    <line x1="-10%" y1="110%" x2="110%" y2="-10%" stroke="black" stroke-width="1" stroke-dasharray="6,30" opacity="0.15"/>
+    <line x1="-10%" y1="80%" x2="80%" y2="-10%" stroke="black" stroke-width="1" stroke-dasharray="6,30" opacity="0.15"/>
+    <line x1="20%" y1="110%" x2="110%" y2="20%" stroke="black" stroke-width="1" stroke-dasharray="6,30" opacity="0.15"/>
+  </svg>
+</div>
 <div class="top-bar">
   <input type="text" id="q" placeholder="武器名で検索..." oninput="render()">
   <span class="foot" id="cnt"></span>
