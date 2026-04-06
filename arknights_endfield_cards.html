@@ -16,9 +16,10 @@
 .fr-btns{display:flex;flex-wrap:wrap;gap:4px}
 .fl{font-size:11px;color:#fff;font-weight:700;white-space:nowrap;background:linear-gradient(to right,#3a3836 60%,transparent 100%);padding:3px 64px 3px 8px;border-radius:2px;display:inline-flex;align-items:center;gap:6px;letter-spacing:0.5px}
 .fl::before{content:'';display:inline-block;width:3px;height:13px;background:#FCD402;transform:skewX(-12deg);flex-shrink:0}
-.fbtn{font-size:12px;padding:3px 10px;border:0.5px solid var(--color-border-secondary);border-radius:12px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .12s;white-space:nowrap}
+.fbtn{font-size:12px;font-weight:700;-webkit-text-stroke:0.1px currentColor;padding:3px 10px;border:0.5px solid var(--color-border-secondary);border-radius:12px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .12s;white-space:nowrap}
 .fbtn:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
 .fbtn.active{color:var(--ab-tx);background:var(--ab-bg);border-color:var(--ab-bg)}
+.fbtn:disabled{opacity:0.25;cursor:not-allowed;pointer-events:none;filter:grayscale(0.6)}
 .fbtn-icon{display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 14px;border-radius:12px}
 .fbtn-icon img{width:20px;height:20px;object-fit:contain}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
@@ -339,12 +340,27 @@ function buildFilters(){
     wtypes.map(t=>`<button class="fbtn" style="${ALL_ACTIVE}" onclick="setW('${t}')">${t}</button>`).join("");
 }
 
-function setB(v){bF=v;document.querySelectorAll("#bf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===v));render();}
-function setE(v){eF=v;document.querySelectorAll("#ef .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===v));render();}
-function setS(v){sF=v;document.querySelectorAll("#sf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===v));render();}
-function setW(v){wF=v;document.querySelectorAll("#wf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(v==="all"?"すべて":v)));render();}
+function setB(v){bF=(bF===v?"all":v);document.querySelectorAll("#bf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===bF));render();}
+function setE(v){eF=(eF===v?"all":v);document.querySelectorAll("#ef .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===eF));render();}
+function setS(v){sF=(sF===v?"all":v);document.querySelectorAll("#sf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===sF));render();}
+function setW(v){wF=(wF===v?"all":v);document.querySelectorAll("#wf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(wF==="all"?"すべて":wF)));render();}
+
+function updateFilterAvailability(){
+  const flat=D.flatMap(r=>r[3].map(w=>[r[0],r[1],r[2],w]));
+  const wt=r=>(WEAPON_INFO[r[3]]?.type||"");
+  const validB=new Set(flat.filter(r=>(eF==="all"||r[1]===eF)&&(sF==="all"||r[2]===sF)&&(wF==="all"||wt(r)===wF)).map(r=>r[0]));
+  const validE=new Set(flat.filter(r=>(bF==="all"||r[0]===bF)&&(sF==="all"||r[2]===sF)&&(wF==="all"||wt(r)===wF)).map(r=>r[1]));
+  const validS=new Set(flat.filter(r=>(bF==="all"||r[0]===bF)&&(eF==="all"||r[1]===eF)&&(wF==="all"||wt(r)===wF)).map(r=>r[2]));
+  const validW=new Set(flat.filter(r=>(bF==="all"||r[0]===bF)&&(eF==="all"||r[1]===eF)&&(sF==="all"||r[2]===sF)).map(r=>wt(r)).filter(Boolean));
+  document.querySelectorAll("#bf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validB.has(b.dataset.val);});
+  document.querySelectorAll("#ef .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validE.has(b.dataset.val);});
+  if(sF!=="all"){document.querySelectorAll("#sf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=(b.dataset.val!==sF);});}
+  else{document.querySelectorAll("#sf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validS.has(b.dataset.val);});}
+  document.querySelectorAll("#wf .fbtn").forEach(b=>{const t=b.textContent.trim();if(t!=="すべて")b.disabled=!validW.has(t);});
+}
 
 function render(){
+  updateFilterAvailability();
   const q=document.getElementById("q").value.trim().toLowerCase();
   const flat=D.flatMap(r=>r[3].map(w=>[r[0],r[1],r[2],w]));
   const rows=flat.filter(r=>{
