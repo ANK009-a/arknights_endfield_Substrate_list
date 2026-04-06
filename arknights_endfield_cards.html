@@ -1,7 +1,8 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-.wrap{padding:2.2rem 0 1rem;font-family:var(--font-sans);min-height:100vh;background:linear-gradient(150deg,#EFED26 0%,#F5F03A 40%,#E2DB00 100%);position:relative;overflow:hidden}
+body{background:linear-gradient(150deg,#e76d3d 0%,#cac227 40%,#cac227 60%,#bebebe 100%);background-attachment:fixed;min-height:100vh}
+.wrap{padding:2.2rem 0 1rem;font-family:var(--font-sans);min-height:100vh;position:relative}
 .content{padding:0 1rem;position:relative;z-index:1}
 .wrap::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.65) 100%);pointer-events:none;z-index:0;mix-blend-mode:multiply}
 .geo-pattern{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:0.09}
@@ -43,7 +44,6 @@
 .foot{font-size:11px;color:var(--color-text-secondary)}
 </style>
 
-<div class="wrap">
 <div class="bg-deco">
   <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
   <div class="bd-row"><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div><div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div></div>
@@ -76,6 +76,7 @@
     <line x1="20%" y1="110%" x2="110%" y2="20%" stroke="black" stroke-width="1" stroke-dasharray="6,30" opacity="0.15"/>
   </svg>
 </div>
+<div class="wrap">  
 <div class="content">
   <div class="top-bar">
     <input type="text" id="q" placeholder="武器名で検索..." oninput="render()">
