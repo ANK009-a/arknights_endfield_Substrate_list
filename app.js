@@ -11,7 +11,7 @@ function buildFilters(){
   const skills=[...new Set(D.map(r=>r.skill))];
 
   document.getElementById("bf").innerHTML=
-    `<button class="fbtn active" data-val="all" style="${ALL_ACTIVE}" onclick="setB('all')">すべて</button>`+
+    `<button class="fbtn fbtn-all active" data-val="all" style="${ALL_ACTIVE}" onclick="setB('all')">すべて</button>`+
     BASE_INFO.map(b=>b.icon
       ?`<button class="fbtn fbtn-icon" data-val="${b.name}" style="${ALL_ACTIVE}" onclick="setB('${b.name}')"><img src="${b.icon}" alt="${b.name}"${b.iconSize?` style="width:${b.iconSize}px;height:${b.iconSize}px"`:''}><span>${b.name}</span></button>`
       :`<button class="fbtn" data-val="${b.name}" style="${ALL_ACTIVE}" onclick="setB('${b.name}')">${b.name}</button>`
@@ -20,7 +20,7 @@ function buildFilters(){
   const effOrder=Object.keys(EFF_ICON);
   const effsSorted=[...new Set([...effOrder.filter(e=>effs.includes(e)),...effs.filter(e=>!effOrder.includes(e))])];
   document.getElementById("ef").innerHTML=
-    `<button class="fbtn active" data-val="all" style="${ALL_ACTIVE}" onclick="setE('all')">すべて</button>`+
+    `<button class="fbtn fbtn-all active" data-val="all" style="${ALL_ACTIVE}" onclick="setE('all')">すべて</button>`+
     effsSorted.map(e=>EFF_ICON[e]
       ?`<button class="fbtn fbtn-icon" data-val="${e}" style="${ALL_ACTIVE}" onclick="setE('${e}')"><img src="${EFF_ICON[e]}" alt="${e}"><span>${e}</span></button>`
       :`<button class="fbtn" data-val="${e}" style="${ALL_ACTIVE}" onclick="setE('${e}')">${e}</button>`
@@ -29,7 +29,7 @@ function buildFilters(){
   const skillOrder=Object.keys(SKILL_ICON);
   const skillsSorted=[...new Set([...skillOrder.filter(s=>skills.includes(s)),...skills.filter(s=>!skillOrder.includes(s))])];
   document.getElementById("sf").innerHTML=
-    `<button class="fbtn active" data-val="all" style="${ALL_ACTIVE}" onclick="setS('all')">すべて</button>`+
+    `<button class="fbtn fbtn-all active" data-val="all" style="${ALL_ACTIVE}" onclick="setS('all')">すべて</button>`+
     skillsSorted.map(s=>SKILL_ICON[s]
       ?`<button class="fbtn fbtn-icon" data-val="${s}" style="${ALL_ACTIVE}" onclick="setS('${s}')"><img src="${SKILL_ICON[s]}" alt="${s}"><span>${s}</span></button>`
       :`<button class="fbtn" data-val="${s}" style="${ALL_ACTIVE}" onclick="setS('${s}')">${s}</button>`
@@ -37,14 +37,15 @@ function buildFilters(){
 
   const wtypes=["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
   document.getElementById("wf").innerHTML=
-    `<button class="fbtn active" style="${ALL_ACTIVE}" onclick="setW('all')">すべて</button>`+
+    `<button class="fbtn fbtn-all active" style="${ALL_ACTIVE}" onclick="setW('all')">すべて</button>`+
     wtypes.map(t=>`<button class="fbtn" style="${ALL_ACTIVE}" onclick="setW('${t}')">${t}</button>`).join("");
 }
 
-function setB(v){bF=(bF===v?"all":v);document.querySelectorAll("#bf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===bF));render();}
-function setE(v){eF=(eF===v?"all":v);document.querySelectorAll("#ef .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===eF));render();}
-function setS(v){sF=(sF===v?"all":v);document.querySelectorAll("#sf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===sF));render();}
-function setW(v){wF=(wF===v?"all":v);document.querySelectorAll("#wf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(wF==="all"?"すべて":wF)));render();}
+function updateAnyActive(){document.querySelector(".fs").classList.toggle("any-active",bF!=="all"||eF!=="all"||sF!=="all"||wF!=="all");}
+function setB(v){bF=(bF===v?"all":v);document.querySelectorAll("#bf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===bF));updateAnyActive();render();}
+function setE(v){eF=(eF===v?"all":v);document.querySelectorAll("#ef .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===eF));updateAnyActive();render();}
+function setS(v){sF=(sF===v?"all":v);document.querySelectorAll("#sf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===sF));updateAnyActive();render();}
+function setW(v){wF=(wF===v?"all":v);document.querySelectorAll("#wf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(wF==="all"?"すべて":wF)));updateAnyActive();render();}
 
 function updateFilterAvailability(){
   const validB=new Set(D.filter(r=>(eF==="all"||r.eff===eF)&&(sF==="all"||r.skill===sF)&&(wF==="all"||r.type===wF)).map(r=>r.base));
