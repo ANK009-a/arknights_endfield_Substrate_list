@@ -1,5 +1,6 @@
 // ---- アプリ本体（データは weapons_data.js） ----
 
+function cardDeco(name,rarity){let h=rarity*31;for(let i=0;i<name.length;i++)h=((h<<5)-h+name.charCodeAt(i))&0xFFFFFF;const b=n=>((h*(n+1)*0x9B3)&0xFF).toString(16).padStart(2,'0').toUpperCase();const x=(((h*7)&0xFFFF)%8990/10+100).toFixed(1);const y=(((h*13)&0xFFFF)%8990/10+100).toFixed(1);return{hex:`0x${b(1)} ${b(2)} ${b(3)}`,coord:`${x} / ${y}`};}
 function hex2rgba(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
 function weaponImgUrl(r){const stem=r.enFull||(r.en?r.en+'_icon':null);if(!stem)return null;const bytes=new TextEncoder().encode(stem+'.png');const hex=Array.from(bytes).map(b=>b.toString(16).padStart(2,'0').toUpperCase()).join('');return'https://arknights-endfield.wikiru.jp/attach2/696D67_'+hex+'.png';}
 
@@ -75,10 +76,12 @@ function render(){
     const dColor=dCount===6?"#FF7000":"#FFBA03";
     const headBg=`linear-gradient(135deg,${dColor} 0%,${hex2rgba(dColor,0.75)} 55%,${hex2rgba(dColor,0.45)} 100%)`;
     const dTx=dCount===6?"#3d1a00":"#3d2a00";
+    const deco=cardDeco(r.name,r.rarity);
 
     return `<div class="card">
       <div class="card-head" style="background:${headBg}">
         <div class="card-deco">${r.skill}</div>
+        <div class="card-dec-hex" style="color:${dTx};opacity:0.4">${deco.hex}</div>
         ${(r.en||r.enFull)?`<img class="card-img" src="${weaponImgUrl(r)}" onerror="this.style.display='none'" alt="">`:''}
         <div class="card-stars">${'<img class="card-star-icon" src="https://endfield.wiki.gg/images/Star.svg?9e1020" alt="★" style="filter:brightness(0) invert(0.15)">'.repeat(dCount)}</div>
         <div style="display:flex;align-items:center;gap:6px">
@@ -90,6 +93,7 @@ function render(){
         </div>
       </div>
       <div class="card-body">
+        <div class="card-dec-coord">${deco.coord}</div>
         <div class="srow">
           ${BASE_ICON[r.base]?`<img class="srow-icon" src="${BASE_ICON[r.base]}" alt="${r.base}">`:`<div class="srow-dot" style="border-color:#888"></div>`}
           <span class="srow-name">${r.base}</span>
@@ -105,7 +109,11 @@ function render(){
       </div>
     </div>`;
   }).join("");
-  document.getElementById("cnt").textContent=`${rows.length} / ${D.length} 件`;
+  document.getElementById("cnt").textContent=`[ ${String(rows.length).padStart(2,'0')} / ${String(D.length).padStart(2,'0')} ]`;
+  const rHex=rows.length.toString(16).padStart(4,'0').toUpperCase();
+  const tHex=D.length.toString(16).padStart(4,'0').toUpperCase();
+  let chk=0;for(const c of(bF+eF+sF+wF))chk=((chk<<5)-chk+c.charCodeAt(0))&0xFFFF;
+  document.getElementById("fs-deco").textContent=`MATCH 0x${rHex} / 0x${tHex}  CHK:${chk.toString(16).padStart(4,'0').toUpperCase()}`;
 }
 
 // bg-deco生成
