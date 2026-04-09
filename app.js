@@ -69,7 +69,7 @@ function render(){
     return true;
   });
   const grid=document.getElementById("grid");
-  if(!rows.length){grid.innerHTML=`<div class="no-res">該当データなし</div>`;document.getElementById("cnt").textContent="0件";return;}
+  if(!rows.length){grid.innerHTML=`<div class="no-res">該当データなし</div>`;document.getElementById("cnt").textContent=`[ 00 / ${String(D.length).padStart(2,'0')} ]`;return;}
 
   grid.innerHTML=rows.map(r=>{
     const dCount=r.rarity>=6?6:5;
@@ -116,8 +116,96 @@ function render(){
   document.getElementById("fs-deco").textContent=`MATCH 0x${rHex} / 0x${tHex}  CHK:${chk.toString(16).padStart(4,'0').toUpperCase()}`;
 }
 
-// bg-deco生成
-document.getElementById("bg-deco").innerHTML=
-  Array.from({length:6},()=>`<div class="bd-row">${Array.from({length:4},()=>`<div class="bd-unit"><span class="bd-sub">アークナイツ</span><span>エンドフィールド</span></div>`).join("")}</div>`).join("");
+// topo-bg生成
+(function(){
+  const canvas=document.getElementById('topo-bg');
+  const ctx=canvas.getContext('2d');
+  function noise(x,y,s){
+    return Math.sin(x*0.3+s)*Math.cos(y*0.2+s*0.7)
+          +Math.sin(x*0.7+y*0.5+s*1.3)*0.5
+          +Math.sin(x*0.15+y*0.35+s*2.1)*1.2
+          +Math.sin(x*2.1+y*1.8+s*0.9)*0.06;
+  }
+  function draw(){
+    const W=canvas.width,H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const step=20,S=3.7;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    for(let l=0;l<14;l++){
+      const thr=-1.4+l*0.22;
+      ctx.beginPath();
+      const textPts=[];let seg=0;
+      for(let x=0;x<W;x+=step){
+        for(let y=0;y<H;y+=step){
+          const v00=noise(x/70,y/70,S),v10=noise((x+step)/70,y/70,S);
+          const v01=noise(x/70,(y+step)/70,S),v11=noise((x+step)/70,(y+step)/70,S);
+          const idx=(v00>thr?8:0)+(v10>thr?4:0)+(v11>thr?2:0)+(v01>thr?1:0);
+          const T=[x+((thr-v00)/(v10-v00)||0.5)*step,y];
+          const B=[x+((thr-v01)/(v11-v01)||0.5)*step,y+step];
+          const L=[x,y+((thr-v00)/(v01-v00)||0.5)*step];
+          const R=[x+step,y+((thr-v10)/(v11-v10)||0.5)*step];
+          const m={1:[B,L],2:[R,B],3:[R,L],4:[T,R],6:[T,B],7:[T,L],8:[T,L],9:[T,B],11:[T,R],12:[R,L],13:[R,B],14:[B,L]};
+          let p0,p1;
+          if(idx===5){ctx.moveTo(T[0],T[1]);ctx.lineTo(L[0],L[1]);ctx.moveTo(R[0],R[1]);ctx.lineTo(B[0],B[1]);p0=T;p1=L;seg+=2;}
+          else if(idx===10){ctx.moveTo(T[0],T[1]);ctx.lineTo(R[0],R[1]);ctx.moveTo(L[0],L[1]);ctx.lineTo(B[0],B[1]);p0=T;p1=R;seg+=2;}
+          else if(m[idx]){p0=m[idx][0];p1=m[idx][1];ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);seg++;}
+          if(p0&&p1&&l%3===1){
+            const mx=(p0[0]+p1[0])/2,my=(p0[1]+p1[1])/2;
+            const rnd=Math.abs(Math.sin(mx*127.1+my*311.7+l*53.3));
+            if(rnd<0.028) textPts.push({x:mx,y:my,a:Math.atan2(p1[1]-p0[1],p1[0]-p0[0])});
+          }
+        }
+      }
+      const b=30+l*5;
+      ctx.strokeStyle=`rgb(${b},${b},${b})`;ctx.lineWidth=0.5;ctx.stroke();
+      if(textPts.length){
+        ctx.font='7px Rajdhani,monospace';
+        ctx.fillStyle='rgba(255,255,255,0.13)';
+        const toH=n=>Math.round(n).toString(16).toUpperCase().padStart(3,'0');
+        const fmt=[
+          p=>`${p.x.toFixed(1)} / ${p.y.toFixed(1)}`,
+          p=>`0x${toH(p.x)} / 0x${toH(p.y)}`,
+          p=>`@0x${toH(p.x)}${toH(p.y)}`,
+          p=>`${toH(p.x)}h / ${toH(p.y)}h`,
+          p=>`${p.x.toFixed(1)} / 0x${toH(p.y)}`,
+        ];
+        textPts.forEach(p=>{
+          const r=Math.abs(Math.sin(p.x*73.1+p.y*191.7));
+          const label=fmt[Math.floor(r*fmt.length)](p);
+          ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
+          ctx.fillText(label,0,-4);
+          ctx.restore();
+        });
+      }
+    }
+  }
+  function drawGrid(){
+    const W=canvas.width,H=canvas.height;
+    const sp=50,crossEvery=4;
+    for(let xi=0;xi*sp<=W;xi++){
+      for(let yi=0;yi*sp<=H;yi++){
+        const x=xi*sp,y=yi*sp;
+        const isCross=(xi%crossEvery===0&&yi%crossEvery===0);
+        if(isCross){
+          const s=5;
+          ctx.strokeStyle='rgba(255,255,255,0.18)';
+          ctx.lineWidth=0.7;
+          ctx.beginPath();
+          ctx.moveTo(x-s,y);ctx.lineTo(x+s,y);
+          ctx.moveTo(x,y-s);ctx.lineTo(x,y+s);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle='rgba(255,255,255,0.07)';
+          ctx.beginPath();
+          ctx.arc(x,y,0.8,0,Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+  }
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;draw();drawGrid();}
+  resize();
+  window.addEventListener('resize',resize);
+})();
 
 buildFilters();render();

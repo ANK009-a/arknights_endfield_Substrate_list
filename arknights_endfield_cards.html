@@ -10,31 +10,7 @@
 </head>
 <body>
 
-<div class="bg-deco" id="bg-deco"></div>
-<div class="geo-pattern">
-  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <pattern id="hg" width="43.3" height="75" patternUnits="userSpaceOnUse">
-        <polygon points="21.65,0 43.3,12.5 43.3,37.5 21.65,50 0,37.5 0,12.5" fill="none" stroke="black" stroke-width="0.8"/>
-        <polygon points="0,37.5 21.65,50 21.65,75 0,87.5 -21.65,75 -21.65,50" fill="none" stroke="black" stroke-width="0.8"/>
-        <polygon points="43.3,37.5 65,50 65,75 43.3,87.5 21.65,75 21.65,50" fill="none" stroke="black" stroke-width="0.8"/>
-        <circle cx="21.65" cy="0" r="1.2" fill="black"/>
-        <circle cx="43.3" cy="12.5" r="1.2" fill="black"/>
-        <circle cx="43.3" cy="37.5" r="1.2" fill="black"/>
-        <circle cx="21.65" cy="50" r="1.2" fill="black"/>
-        <circle cx="0" cy="37.5" r="1.2" fill="black"/>
-        <circle cx="0" cy="12.5" r="1.2" fill="black"/>
-        <circle cx="21.65" cy="75" r="1.2" fill="black"/>
-        <circle cx="0" cy="62.5" r="1.2" fill="black"/>
-        <circle cx="43.3" cy="62.5" r="1.2" fill="black"/>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#hg)"/>
-    <line x1="-10%" y1="110%" x2="110%" y2="-10%" stroke="black" stroke-width="1" stroke-dasharray="6,30" opacity="0.15"/>
-    <line x1="-10%" y1="80%" x2="80%" y2="-10%" stroke="black" stroke-width="1" stroke-dasharray="6,30" opacity="0.15"/>
-    <line x1="20%" y1="110%" x2="110%" y2="20%" stroke="black" stroke-width="1" stroke-dasharray="6,30" opacity="0.15"/>
-  </svg>
-</div>
+<canvas id="topo-bg"></canvas>
 <div class="wrap">
   <div class="content">
     <div class="r-header">
