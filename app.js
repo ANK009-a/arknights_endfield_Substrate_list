@@ -195,7 +195,7 @@ function render(){
           ctx.moveTo(x,y-s);ctx.lineTo(x,y+s);
           ctx.stroke();
         } else {
-          ctx.fillStyle='rgba(255,255,255,0.07)';
+          ctx.fillStyle='rgba(255,255,255,0.15)';
           ctx.beginPath();
           ctx.arc(x,y,0.8,0,Math.PI*2);
           ctx.fill();

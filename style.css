@@ -45,7 +45,7 @@ body{background:#0A0A0A;background-attachment:fixed;min-height:100vh}
 .card-name-txt{font-size:13px;font-weight:700;line-height:1.35;position:relative;z-index:1}
 .card-dec-hex{position:absolute;top:5px;right:8px;font-size:7px;letter-spacing:1.5px;pointer-events:none;font-family:var(--rv-font);z-index:1;line-height:1}
 .card-dec-coord{position:absolute;bottom:5px;right:8px;font-size:7px;letter-spacing:0.5px;pointer-events:none;color:rgba(180,180,180,0.35);font-family:var(--rv-font)}
-.card-body{padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;background:#2A2825;position:relative}
+.card-body{padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;background-color:#2A2825;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='25' y1='30' x2='35' y2='30' stroke='white' stroke-opacity='0.12' stroke-width='0.7'/%3E%3Cline x1='30' y1='25' x2='30' y2='35' stroke='white' stroke-opacity='0.12' stroke-width='0.7'/%3E%3C/svg%3E"),radial-gradient(circle,rgba(255,255,255,0.07) 0.8px,transparent 0.8px);background-size:60px 60px,15px 15px;position:relative}
 .card-body::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,transparent,var(--rv-accent),transparent);opacity:0;transition:opacity .2s}
 .card:hover .card-body::before{opacity:1;animation:energyCharge .4s ease-out}
 @keyframes energyCharge{0%{clip-path:inset(100% 0 0 0);opacity:0.5}100%{clip-path:inset(0% 0 0 0);opacity:1}}
