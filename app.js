@@ -4,41 +4,40 @@ function hex2rgba(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slic
 function weaponImgUrl(r){const stem=r.enFull||(r.en?r.en+'_icon':null);if(!stem)return null;const bytes=new TextEncoder().encode(stem+'.png');const hex=Array.from(bytes).map(b=>b.toString(16).padStart(2,'0').toUpperCase()).join('');return'https://arknights-endfield.wikiru.jp/attach2/696D67_'+hex+'.png';}
 
 let bF="all",eF="all",sF="all",wF="all";
-const ALL_ACTIVE="--ab-bg:#FCD402;--ab-tx:#3a2e00";
 
 function buildFilters(){
   const effs=[...new Set(D.map(r=>r.eff))];
   const skills=[...new Set(D.map(r=>r.skill))];
 
   document.getElementById("bf").innerHTML=
-    `<button class="fbtn fbtn-all active" data-val="all" style="${ALL_ACTIVE}" onclick="setB('all')">すべて</button>`+
+    `<button class="fbtn fbtn-all active" data-val="all" onclick="setB('all')">すべて</button>`+
     BASE_INFO.map(b=>b.icon
-      ?`<button class="fbtn fbtn-icon" data-val="${b.name}" style="${ALL_ACTIVE}" onclick="setB('${b.name}')"><img src="${b.icon}" alt="${b.name}"${b.iconSize?` style="width:${b.iconSize}px;height:${b.iconSize}px"`:''}><span>${b.name}</span></button>`
-      :`<button class="fbtn" data-val="${b.name}" style="${ALL_ACTIVE}" onclick="setB('${b.name}')">${b.name}</button>`
+      ?`<button class="fbtn fbtn-icon" data-val="${b.name}" onclick="setB('${b.name}')"><img src="${b.icon}" alt="${b.name}"><span>${b.name}</span></button>`
+      :`<button class="fbtn" data-val="${b.name}" onclick="setB('${b.name}')">${b.name}</button>`
     ).join("");
 
   const effOrder=Object.keys(EFF_ICON);
   const effsSorted=[...new Set([...effOrder.filter(e=>effs.includes(e)),...effs.filter(e=>!effOrder.includes(e))])];
   document.getElementById("ef").innerHTML=
-    `<button class="fbtn fbtn-all active" data-val="all" style="${ALL_ACTIVE}" onclick="setE('all')">すべて</button>`+
+    `<button class="fbtn fbtn-all active" data-val="all" onclick="setE('all')">すべて</button>`+
     effsSorted.map(e=>EFF_ICON[e]
-      ?`<button class="fbtn fbtn-icon" data-val="${e}" style="${ALL_ACTIVE}" onclick="setE('${e}')"><img src="${EFF_ICON[e]}" alt="${e}"><span>${e}</span></button>`
-      :`<button class="fbtn" data-val="${e}" style="${ALL_ACTIVE}" onclick="setE('${e}')">${e}</button>`
+      ?`<button class="fbtn fbtn-icon" data-val="${e}" onclick="setE('${e}')"><img src="${EFF_ICON[e]}" alt="${e}"><span>${e}</span></button>`
+      :`<button class="fbtn" data-val="${e}" onclick="setE('${e}')">${e}</button>`
     ).join("");
 
   const skillOrder=Object.keys(SKILL_ICON);
   const skillsSorted=[...new Set([...skillOrder.filter(s=>skills.includes(s)),...skills.filter(s=>!skillOrder.includes(s))])];
   document.getElementById("sf").innerHTML=
-    `<button class="fbtn fbtn-all active" data-val="all" style="${ALL_ACTIVE}" onclick="setS('all')">すべて</button>`+
+    `<button class="fbtn fbtn-all active" data-val="all" onclick="setS('all')">すべて</button>`+
     skillsSorted.map(s=>SKILL_ICON[s]
-      ?`<button class="fbtn fbtn-icon" data-val="${s}" style="${ALL_ACTIVE}" onclick="setS('${s}')"><img src="${SKILL_ICON[s]}" alt="${s}"><span>${s}</span></button>`
-      :`<button class="fbtn" data-val="${s}" style="${ALL_ACTIVE}" onclick="setS('${s}')">${s}</button>`
+      ?`<button class="fbtn fbtn-icon" data-val="${s}" onclick="setS('${s}')"><img src="${SKILL_ICON[s]}" alt="${s}"><span>${s}</span></button>`
+      :`<button class="fbtn" data-val="${s}" onclick="setS('${s}')">${s}</button>`
     ).join("");
 
   const wtypes=["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
   document.getElementById("wf").innerHTML=
-    `<button class="fbtn fbtn-all active" style="${ALL_ACTIVE}" onclick="setW('all')">すべて</button>`+
-    wtypes.map(t=>`<button class="fbtn" style="${ALL_ACTIVE}" onclick="setW('${t}')">${t}</button>`).join("");
+    `<button class="fbtn fbtn-all active" onclick="setW('all')">すべて</button>`+
+    wtypes.map(t=>`<button class="fbtn" onclick="setW('${t}')">${t}</button>`).join("");
 }
 
 function updateAnyActive(){document.querySelector(".fs").classList.toggle("any-active",bF!=="all"||eF!=="all"||sF!=="all"||wF!=="all");}
@@ -61,13 +60,11 @@ function updateFilterAvailability(){
 
 function render(){
   updateFilterAvailability();
-  const q=document.getElementById("q").value.trim().toLowerCase();
   const rows=D.filter(r=>{
     if(bF!=="all"&&r.base!==bF)return false;
     if(eF!=="all"&&r.eff!==eF)return false;
     if(sF!=="all"&&r.skill!==sF)return false;
     if(wF!=="all"&&r.type!==wF)return false;
-    if(q&&!r.name.toLowerCase().includes(q))return false;
     return true;
   });
   const grid=document.getElementById("grid");

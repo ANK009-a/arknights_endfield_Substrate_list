@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>アークナイツ：エンドフィールド 基質リスト</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -35,15 +37,18 @@
 </div>
 <div class="wrap">
   <div class="content">
-    <div class="top-bar">
-      <input type="text" id="q" placeholder="武器名で検索..." oninput="render()">
-      <span class="foot" id="cnt"></span>
+    <div class="r-header">
+      <div class="r-title">Weapon List — 基質一覧 ////////////////////////////////////</div>
     </div>
     <div class="fs">
       <div class="fr"><span class="fl">基礎効果</span><div id="bf" class="fr-btns"></div></div>
       <div class="fr"><span class="fl">付加効果</span><div id="ef" class="fr-btns"></div></div>
       <div class="fr"><span class="fl">スキル</span><div id="sf" class="fr-btns"></div></div>
       <div class="fr"><span class="fl">武器種</span><div id="wf" class="fr-btns"></div></div>
+    </div>
+    <div class="r-header">
+      <div class="r-title-gray">Weapon Cards</div>
+      <span class="foot" id="cnt"></span>
     </div>
     <div class="grid" id="grid"></div>
   </div>
