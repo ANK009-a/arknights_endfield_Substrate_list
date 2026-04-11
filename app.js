@@ -2,7 +2,9 @@
 
 function cardDeco(name,rarity){let h=rarity*31;for(let i=0;i<name.length;i++)h=((h<<5)-h+name.charCodeAt(i))&0xFFFFFF;const b=n=>((h*(n+1)*0x9B3)&0xFF).toString(16).padStart(2,'0').toUpperCase();const x=(((h*7)&0xFFFF)%8990/10+100).toFixed(1);const y=(((h*13)&0xFFFF)%8990/10+100).toFixed(1);return{hex:`0x${b(1)} ${b(2)} ${b(3)}`,coord:`${x} / ${y}`};}
 function hex2rgba(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
-function weaponImgUrl(r){const stem=r.enFull||(r.en?r.en+'_icon':null);if(!stem)return null;const bytes=new TextEncoder().encode(stem+'.png');const hex=Array.from(bytes).map(b=>b.toString(16).padStart(2,'0').toUpperCase()).join('');return'https://arknights-endfield.wikiru.jp/attach2/696D67_'+hex+'.png';}
+function weaponImgUrl(r){return r.name?`images/weapons/${r.name}.png`:null;}
+const _STAR='<img class="card-star-icon" src="images/bass_star.png" alt="★" style="filter:brightness(0) invert(0.15)">';
+const STARS={5:_STAR.repeat(5),6:_STAR.repeat(6)};
 
 let bF="all",eF="all",sF="all",wF="all";
 
@@ -37,15 +39,15 @@ function buildFilters(){
 
   const wtypes=["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
   document.getElementById("wf").innerHTML=
-    `<button class="fbtn fbtn-all active" onclick="setW('all')">すべて</button>`+
-    wtypes.map(t=>`<button class="fbtn" onclick="setW('${t}')">${t}</button>`).join("");
+    `<button class="fbtn fbtn-all active" data-val="all" onclick="setW('all')">すべて</button>`+
+    wtypes.map(t=>`<button class="fbtn" data-val="${t}" onclick="setW('${t}')">${t}</button>`).join("");
 }
 
 function updateAnyActive(){document.querySelector(".fs").classList.toggle("any-active",bF!=="all"||eF!=="all"||sF!=="all"||wF!=="all");}
 function setB(v){bF=(bF===v?"all":v);document.querySelectorAll("#bf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===bF));updateAnyActive();render();}
 function setE(v){eF=(eF===v?"all":v);document.querySelectorAll("#ef .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===eF));updateAnyActive();render();}
 function setS(v){sF=(sF===v?"all":v);document.querySelectorAll("#sf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===sF));updateAnyActive();render();}
-function setW(v){wF=(wF===v?"all":v);document.querySelectorAll("#wf .fbtn").forEach(b=>b.classList.toggle("active",b.textContent===(wF==="all"?"すべて":wF)));updateAnyActive();render();}
+function setW(v){wF=(wF===v?"all":v);document.querySelectorAll("#wf .fbtn").forEach(b=>b.classList.toggle("active",b.dataset.val===wF));updateAnyActive();render();}
 
 function updateFilterAvailability(){
   const validB=new Set(D.filter(r=>(eF==="all"||r.eff===eF)&&(sF==="all"||r.skill===sF)&&(wF==="all"||r.type===wF)).map(r=>r.base));
@@ -54,9 +56,8 @@ function updateFilterAvailability(){
   const validW=new Set(D.filter(r=>(bF==="all"||r.base===bF)&&(eF==="all"||r.eff===eF)&&(sF==="all"||r.skill===sF)).map(r=>r.type));
   document.querySelectorAll("#bf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validB.has(b.dataset.val);});
   document.querySelectorAll("#ef .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validE.has(b.dataset.val);});
-  if(sF!=="all"){document.querySelectorAll("#sf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=(b.dataset.val!==sF);});}
-  else{document.querySelectorAll("#sf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validS.has(b.dataset.val);});}
-  document.querySelectorAll("#wf .fbtn").forEach(b=>{const t=b.textContent.trim();if(t!=="すべて")b.disabled=!validW.has(t);});
+  document.querySelectorAll("#sf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validS.has(b.dataset.val);});
+  document.querySelectorAll("#wf .fbtn").forEach(b=>{if(b.dataset.val&&b.dataset.val!=="all")b.disabled=!validW.has(b.dataset.val);});
 }
 
 function render(){
@@ -82,8 +83,8 @@ function render(){
       <div class="card-head" style="background:${headBg}">
         <div class="card-deco">${r.skill}</div>
         <div class="card-dec-hex" style="color:${dTx};opacity:0.4">${deco.hex}</div>
-        ${(r.en||r.enFull)?`<img class="card-img" src="${weaponImgUrl(r)}" onerror="this.style.display='none'" alt="">`:''}
-        <div class="card-stars">${'<img class="card-star-icon" src="https://endfield.wiki.gg/images/Star.svg?9e1020" alt="★" style="filter:brightness(0) invert(0.15)">'.repeat(dCount)}</div>
+        <img class="card-img" src="${weaponImgUrl(r)}" onerror="this.style.display='none'" alt="">
+        <div class="card-stars">${STARS[dCount]}</div>
         <div style="display:flex;align-items:center;gap:6px">
           <div class="srow-bar" style="background:${dTx};height:30px"></div>
           <div>
@@ -120,6 +121,15 @@ function render(){
 (function(){
   const canvas=document.getElementById('topo-bg');
   const ctx=canvas.getContext('2d');
+  let _snapshot=null,_textPts=[];
+  const toH=n=>Math.round(n).toString(16).toUpperCase().padStart(3,'0');
+  const _fmt=[
+    p=>`${p.x.toFixed(1)} / ${p.y.toFixed(1)}`,
+    p=>`0x${toH(p.x)} / 0x${toH(p.y)}`,
+    p=>`@0x${toH(p.x)}${toH(p.y)}`,
+    p=>`${toH(p.x)}h / ${toH(p.y)}h`,
+    p=>`${p.x.toFixed(1)} / 0x${toH(p.y)}`,
+  ];
   function noise(x,y,s){
     return Math.sin(x*0.3+s)*Math.cos(y*0.2+s*0.7)
           +Math.sin(x*0.7+y*0.5+s*1.3)*0.5
@@ -130,11 +140,10 @@ function render(){
     const W=canvas.width,H=canvas.height;
     ctx.clearRect(0,0,W,H);
     const step=20,S=3.7;
-    ctx.textAlign='center';ctx.textBaseline='middle';
+    _textPts=[];
     for(let l=0;l<14;l++){
       const thr=-1.4+l*0.22;
       ctx.beginPath();
-      const textPts=[];let seg=0;
       for(let x=0;x<W;x+=step){
         for(let y=0;y<H;y+=step){
           const v00=noise(x/70,y/70,S),v10=noise((x+step)/70,y/70,S);
@@ -146,37 +155,18 @@ function render(){
           const R=[x+step,y+((thr-v10)/(v11-v10)||0.5)*step];
           const m={1:[B,L],2:[R,B],3:[R,L],4:[T,R],6:[T,B],7:[T,L],8:[T,L],9:[T,B],11:[T,R],12:[R,L],13:[R,B],14:[B,L]};
           let p0,p1;
-          if(idx===5){ctx.moveTo(T[0],T[1]);ctx.lineTo(L[0],L[1]);ctx.moveTo(R[0],R[1]);ctx.lineTo(B[0],B[1]);p0=T;p1=L;seg+=2;}
-          else if(idx===10){ctx.moveTo(T[0],T[1]);ctx.lineTo(R[0],R[1]);ctx.moveTo(L[0],L[1]);ctx.lineTo(B[0],B[1]);p0=T;p1=R;seg+=2;}
-          else if(m[idx]){p0=m[idx][0];p1=m[idx][1];ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);seg++;}
+          if(idx===5){ctx.moveTo(T[0],T[1]);ctx.lineTo(L[0],L[1]);ctx.moveTo(R[0],R[1]);ctx.lineTo(B[0],B[1]);p0=T;p1=L;}
+          else if(idx===10){ctx.moveTo(T[0],T[1]);ctx.lineTo(R[0],R[1]);ctx.moveTo(L[0],L[1]);ctx.lineTo(B[0],B[1]);p0=T;p1=R;}
+          else if(m[idx]){p0=m[idx][0];p1=m[idx][1];ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);}
           if(p0&&p1&&l%3===1){
             const mx=(p0[0]+p1[0])/2,my=(p0[1]+p1[1])/2;
             const rnd=Math.abs(Math.sin(mx*127.1+my*311.7+l*53.3));
-            if(rnd<0.028) textPts.push({x:mx,y:my,a:Math.atan2(p1[1]-p0[1],p1[0]-p0[0])});
+            if(rnd<0.028) _textPts.push({x:mx,y:my,a:Math.atan2(p1[1]-p0[1],p1[0]-p0[0]),fi:Math.floor(Math.random()*_fmt.length),nextChange:0});
           }
         }
       }
       const b=30+l*5;
       ctx.strokeStyle=`rgb(${b},${b},${b})`;ctx.lineWidth=0.5;ctx.stroke();
-      if(textPts.length){
-        ctx.font='7px Rajdhani,monospace';
-        ctx.fillStyle='rgba(255,255,255,0.13)';
-        const toH=n=>Math.round(n).toString(16).toUpperCase().padStart(3,'0');
-        const fmt=[
-          p=>`${p.x.toFixed(1)} / ${p.y.toFixed(1)}`,
-          p=>`0x${toH(p.x)} / 0x${toH(p.y)}`,
-          p=>`@0x${toH(p.x)}${toH(p.y)}`,
-          p=>`${toH(p.x)}h / ${toH(p.y)}h`,
-          p=>`${p.x.toFixed(1)} / 0x${toH(p.y)}`,
-        ];
-        textPts.forEach(p=>{
-          const r=Math.abs(Math.sin(p.x*73.1+p.y*191.7));
-          const label=fmt[Math.floor(r*fmt.length)](p);
-          ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
-          ctx.fillText(label,0,-4);
-          ctx.restore();
-        });
-      }
     }
   }
   function drawGrid(){
@@ -188,24 +178,40 @@ function render(){
         const isCross=(xi%crossEvery===0&&yi%crossEvery===0);
         if(isCross){
           const s=5;
-          ctx.strokeStyle='rgba(255,255,255,0.18)';
-          ctx.lineWidth=0.7;
-          ctx.beginPath();
-          ctx.moveTo(x-s,y);ctx.lineTo(x+s,y);
-          ctx.moveTo(x,y-s);ctx.lineTo(x,y+s);
-          ctx.stroke();
+          ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=0.7;
+          ctx.beginPath();ctx.moveTo(x-s,y);ctx.lineTo(x+s,y);ctx.moveTo(x,y-s);ctx.lineTo(x,y+s);ctx.stroke();
         } else {
           ctx.fillStyle='rgba(255,255,255,0.15)';
-          ctx.beginPath();
-          ctx.arc(x,y,0.8,0,Math.PI*2);
-          ctx.fill();
+          ctx.beginPath();ctx.arc(x,y,0.8,0,Math.PI*2);ctx.fill();
         }
       }
     }
   }
-  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;draw();drawGrid();}
+  function drawText(){
+    if(!_snapshot)return;
+    ctx.putImageData(_snapshot,0,0);
+    const now=Date.now();
+    ctx.font='7px Rajdhani,monospace';ctx.fillStyle='rgba(255,255,255,0.13)';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    _textPts.forEach(p=>{
+      if(now>=p.nextChange){
+        p.fi=Math.floor(Math.random()*_fmt.length);
+        p.nextChange=now+1500+Math.random()*3000;
+      }
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
+      ctx.fillText(_fmt[p.fi](p),0,-4);
+      ctx.restore();
+    });
+  }
+  function resize(){
+    canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+    draw();drawGrid();
+    _snapshot=ctx.getImageData(0,0,canvas.width,canvas.height);
+    drawText();
+  }
   resize();
   window.addEventListener('resize',resize);
+  setInterval(drawText,10);
 })();
 
 buildFilters();render();
