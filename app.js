@@ -3,7 +3,7 @@
 function cardDeco(name,rarity){let h=rarity*31;for(let i=0;i<name.length;i++)h=((h<<5)-h+name.charCodeAt(i))&0xFFFFFF;const b=n=>((h*(n+1)*0x9B3)&0xFF).toString(16).padStart(2,'0').toUpperCase();const x=(((h*7)&0xFFFF)%8990/10+100).toFixed(1);const y=(((h*13)&0xFFFF)%8990/10+100).toFixed(1);return{hex:`0x${b(1)} ${b(2)} ${b(3)}`,coord:`${x} / ${y}`};}
 function hex2rgba(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
 function weaponImgUrl(r){return r.name?`images/weapons/${r.name}.png`:null;}
-const _STAR='<img class="card-star-icon" src="images/bass_star.png" alt="★" style="filter:brightness(0) invert(0.15)">';
+const _STAR='<img class="card-star-icon" src="images/base_star.png" alt="★" style="filter:brightness(0) invert(0.15)">';
 const STARS={5:_STAR.repeat(5),6:_STAR.repeat(6)};
 
 let bF="all",eF="all",sF="all",wF="all";

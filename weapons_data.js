@@ -63,7 +63,7 @@ const BASE_INFO=[
   {name:"敏捷",      icon:"images/base_agi.png"},
   {name:"知性",      icon:"images/base_int.png"},
   {name:"意志",      icon:"images/base_wil.png"},
-  {name:"メイン能力",icon:"images/bass_star.png"},
+  {name:"メイン能力",icon:"images/base_star.png"},
 ];
 const BASE_ICON=Object.fromEntries(BASE_INFO.map(b=>[b.name,b.icon]));
 
